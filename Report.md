@@ -23,35 +23,33 @@ Saya melakukan tinjauan keamanan ringan terhadap SION dari permukaan publik. **T
 
 **Kesimpulan singkat**: SION punya fondasi keamanan yang **cukup baik** (Cloudflare WAF, HSTS, CSRF, POST login, no reflected input di login). Yang perlu ditambah adalah **konsistensi** (header security) dan **hardening preventif** (code smell di fungsi toast, defense in depth via CSP).
 
-| Severity | Jumlah Temuan | Ringkasan |
+| Severity | Jumlah Temuan | Ringkasan
 |---|---|---|
-| 🔴 Critical | 0 | Tidak ada kerentanan kritis yang bisa dieksploitasi langsung dari public surface |
-| 🟡 Medium | 2 | Security header hilang di halaman dinamis; latent XSS code smell |
-| 🟢 Low | 3 | Framework CI 3 (tua); `autocomplete="off"` UX issue; default CSRF token name |
-| ⚪ Informational | 1 | `robots.txt` Content-Signal configuration |
-
+| 🔴 Critical | 0 | Tidak ada kerentanan kritis yang bisa dieksploitasi langsung dari public surface
+| 🟡 Medium | 2 | Security header hilang di halaman dinamis; latent XSS code smell
+| 🟢 Low | 3 | Framework CI 3 (tua); `autocomplete="off"` UX issue; default CSRF token name
+| ⚪ Informational | 1 | `robots.txt` Content-Signal configuration
 **Tidak ada exploit path yang verified dari public surface.** Semua rekomendasi adalah **hardening dan defense in depth**.
 
 ---
 
 ## 1. Yang Sudah Bagus (Positif)
 
-| Kontrol | Bukti | Catatan |
+| Kontrol | Bukti | Catatan
 |---|---|---|
-| **Cloudflare WAF aktif** | Probing ke `/.env`, `/.git/HEAD`, `/phpinfo.php` semua di-block dengan halaman "Attention Required! \| Cloudflare" (Ray ID dilampirkan di response) | WAF rules untuk sensitive paths berfungsi, termasuk protection terhadap common exploit scanning |
-| **HSTS aktif** | `strict-transport-security: max-age=31536000` | 1 tahun, kuat |
-| **Login method POST (bukan GET)** | `<form method="post" action="/validation">` | Kredensial tidak masuk ke URL/log. Mencegah reflected XSS via URL parameter |
-| **CSRF token pada form login** | Hidden field `csrf_test_name` (32-char) | Token ada per-request, harus divalidasi server-side |
-| **Cache-Control: no-store** | Header `Cache-Control: no-store, max-age=0, no-cache` di halaman login | Mencegah caching form sensitif di browser/proxy |
-| **Tidak ada GET forms** | grep terhadap HTML: zero GET methods | Tidak ada attack surface untuk reflected XSS via URL |
-| **Tidak ada XSS critical patterns** | Tidak ada `eval()`, `document.write()`, `dangerouslySetInnerHTML` di user-facing script | Latent risk via `showToast` dibahas di Temuan #2 |
-| **x-frame-options di static assets** | `SAMEORIGIN` di PDF tutorial | Clickjacking protection untuk static |
-| **x-content-type-options di static assets** | `nosniff` di PDF tutorial | MIME sniffing protection untuk static |
-| **x-xss-protection di static assets** | `1; mode=block` di PDF tutorial (legacy, deprecated tapi harmless) | Browser modern mengabaikannya, tetap defense in depth |
-| **Server header disamarkan** | `Server: cloudflare` (bukan Apache/Nginx version) | Mengurangi info disclosure backend |
-| **External fonts lewat HTTPS** | `fonts.googleapis.com`, `fonts.gstatic.com` | Privacy-friendly |
-| **Forgot password pakai 3-faktor** | NIM + Tempat Lahir + Tanggal Lahir | Lebih aman dari single-factor reset |
-
+| **Cloudflare WAF aktif** | Probing ke `/.env`, `/.git/HEAD`, `/phpinfo.php` semua di-block dengan halaman "Attention Required! \| Cloudflare" (Ray ID dilampirkan di response) | WAF rules untuk sensitive paths berfungsi, termasuk protection terhadap common exploit scanning
+| **HSTS aktif** | `strict-transport-security: max-age=31536000` | 1 tahun, kuat
+| **Login method POST (bukan GET)** | `<form method="post" action="/validation">` | Kredensial tidak masuk ke URL/log. Mencegah reflected XSS via URL parameter
+| **CSRF token pada form login** | Hidden field `csrf_test_name` (32-char) | Token ada per-request, harus divalidasi server-side
+| **Cache-Control: no-store** | Header `Cache-Control: no-store, max-age=0, no-cache` di halaman login | Mencegah caching form sensitif di browser/proxy
+| **Tidak ada GET forms** | grep terhadap HTML: zero GET methods | Tidak ada attack surface untuk reflected XSS via URL
+| **Tidak ada XSS critical patterns** | Tidak ada `eval()`, `document.write()`, `dangerouslySetInnerHTML` di user-facing script | Latent risk via `showToast` dibahas di Temuan #2
+| **x-frame-options di static assets** | `SAMEORIGIN` di PDF tutorial | Clickjacking protection untuk static
+| **x-content-type-options di static assets** | `nosniff` di PDF tutorial | MIME sniffing protection untuk static
+| **x-xss-protection di static assets** | `1; mode=block` di PDF tutorial (legacy, deprecated tapi harmless) | Browser modern mengabaikannya, tetap defense in depth
+| **Server header disamarkan** | `Server: cloudflare` (bukan Apache/Nginx version) | Mengurangi info disclosure backend
+| **External fonts lewat HTTPS** | `fonts.googleapis.com`, `fonts.gstatic.com` | Privacy-friendly
+| **Forgot password pakai 3-faktor** | NIM + Tempat Lahir + Tanggal Lahir | Lebih aman dari single-factor reset
 **Kesimpulan**: fondasi keamanan Anda sudah ada. Yang dibutuhkan adalah **konsistensi** (header juga di halaman dinamis) dan **hardening preventif** (latent XSS code smell).
 
 ---
@@ -72,14 +70,13 @@ curl -sI https://sion.stikom-bali.ac.id/ | grep -iE "x-|content-security|referre
 
 **Header yang HILANG di halaman dinamis (tapi ADA di static asset PDF)**:
 
-| Header | Nilai yang disarankan | Alasan |
+| Header | Nilai yang disarankan | Alasan
 |---|---|---|
-| `Content-Security-Policy` | `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'self';` | **Mencegah XSS** (blok inline script), data injection, clickjacking |
-| `Referrer-Policy` | `strict-origin-when-cross-origin` | Cegah bocor URL NIM/nama ke external site |
-| `X-Content-Type-Options` | `nosniff` | Mencegah browser tebak content type |
-| `X-Frame-Options` | `SAMEORIGIN` (atau `DENY`) | Cegah clickjacking |
-| `Permissions-Policy` | `geolocation=(), camera=(), microphone=()` | Disable fitur browser yang tidak perlu |
-
+| `Content-Security-Policy` | `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'self';` | **Mencegah XSS** (blok inline script), data injection, clickjacking
+| `Referrer-Policy` | `strict-origin-when-cross-origin` | Cegah bocor URL NIM/nama ke external site
+| `X-Content-Type-Options` | `nosniff` | Mencegah browser tebak content type
+| `X-Frame-Options` | `SAMEORIGIN` (atau `DENY`) | Cegah clickjacking
+| `Permissions-Policy` | `geolocation=(), camera=(), microphone=()` | Disable fitur browser yang tidak perlu
 **Inkonsistensi**: PDF tutorial punya header `X-Frame-Options: SAMEORIGIN` dan `X-Content-Type-Options: nosniff`, tapi halaman login (HTML) **tidak punya** header yang sama. Header ditambahin di level web server untuk folder `/assets/`, tapi **tidak untuk folder CodeIgniter** (`/`).
 
 **Fix untuk nginx**:
@@ -202,15 +199,14 @@ $config['csrf_regenerate'] = true;
 
 ## 3. Yang TIDAK Bisa Saya Verifikasi (dan Perlu Dicek Internal)
 
-| Area | Yang perlu dicek | Cara cek |
+| Area | Yang perlu dicek | Cara cek
 |---|---|---|
-| **Rate limiting login** | Limit attempt per NIM per waktu? | Code review di LoginController |
-| **Session cookie flags** | HttpOnly, Secure, SameSite? | Browser DevTools |
-| **Password hashing** | `password_hash()` modern atau MD5/SHA1? | Code review |
-| **Username enumeration** | Response `/validation` beda untuk "user not found" vs "wrong password"? | Harus SAMA |
-| **Forgot password flow** | Rate limit + token expiration + single-use? | Code review |
-| **Halaman authenticated XSS** | Stored XSS di biodata, KRS, KHS, dll? | Perlu akses + izin |
-
+| **Rate limiting login** | Limit attempt per NIM per waktu? | Code review di LoginController
+| **Session cookie flags** | HttpOnly, Secure, SameSite? | Browser DevTools
+| **Password hashing** | `password_hash()` modern atau MD5/SHA1? | Code review
+| **Username enumeration** | Response `/validation` beda untuk "user not found" vs "wrong password"? | Harus SAMA
+| **Forgot password flow** | Rate limit + token expiration + single-use? | Code review
+| **Halaman authenticated XSS** | Stored XSS di biodata, KRS, KHS, dll? | Perlu akses + izin
 ---
 
 ## 4. Cara Verifikasi Semua Temuan (oleh Tim IT)
@@ -276,7 +272,6 @@ Jika tim IT ingin diskusi lebih lanjut atau butuh klarifikasi, saya terbuka.
 Mahasiswa Program Studi Sistem Informasi  
 STIKOM Bali  
 Email: afiqandico13@gmail.com  
-WhatsApp: 
 
 ---
 
