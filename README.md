@@ -71,6 +71,5 @@ For similar research methodology, see [OWASP Testing Guide](https://owasp.org/ww
 **Afiq Andico** — Mahasiswa Sistem Informasi, STIKOM Bali
 
 - Email: afiqandico13@gmail.com
-- WhatsApp: 08990308936
 - LinkedIn: [linkedin.com/in/afiqandico](https://linkedin.com/in/afiqandico) (placeholder)
 - GitHub: [@afiqandico13](https://github.com/afiqandico13)
