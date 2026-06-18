@@ -276,7 +276,7 @@ Jika tim IT ingin diskusi lebih lanjut atau butuh klarifikasi, saya terbuka.
 Mahasiswa Program Studi Sistem Informasi  
 STIKOM Bali  
 Email: afiqandico13@gmail.com  
-WhatsApp: 08990308936
+WhatsApp: 
 
 ---
 
