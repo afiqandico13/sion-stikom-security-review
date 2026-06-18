@@ -95,7 +95,6 @@ Catatan lengkap tersedia dalam dua format:
 KONTAK
 Kalau Tim IT berkenan berdiskusi atau butuh klarifikasi, saya terbuka:
 - Email: afiqandico13@gmail.com
-- WhatsApp: 08990308936
 
 Saya sangat berharap feedback ini bermanfaat, dan SION bisa makin aman
 untuk kita semua mahasiswa dan civitas akademika.
@@ -107,7 +106,7 @@ Afiq Andico
 Mahasiswa Program Studi Sistem Informasi
 STIKOM Bali
 NIM: [ISI_NIM]
-Kontak: afiqandico13@gmail.com | 08990308936
+Kontak: afiqandico13@gmail.com
 ```
 
 ## Tips Tambahan
