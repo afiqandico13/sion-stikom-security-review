@@ -1,75 +1,73 @@
-# SION STIKOM Bali — Security Review
+# SION STIKOM Bali — Security Research
 
-Static security analysis of `https://sion.stikom-bali.ac.id/` (Sistem Informasi Online STIKOM Bali) by a student observer. Conducted 18 June 2026 as constructive feedback to IT Support, not an exploit disclosure.
+Comprehensive security research on ITB STIKOM Bali's web infrastructure. Dua report tersedia: **pentest 2026** (comprehensive) dan **static review** (preliminary).
 
-## What's in this repo
+---
 
-- **[Report.md](Report.md)** — Main security review (header + XSS posture, 6 temuan, rekomendasi)
-- **[Report.html](Report.html)** — HTML version of the report
-- **[Report.pdf](Report.pdf)** — PDF version (generated via Microsoft Edge print-to-pdf)
-- **[email-to-it.md](email-to-it.md)** — Draft email to STIKOM IT Support (template for forwarding)
+## 📑 Reports
 
-## Summary
+### 🎯 [pentest-2026/](./pentest-2026/) — **Comprehensive (22 Juni 2026)**
+Full OWASP-aligned black-box penetration test on `*.stikom-bali.ac.id`:
+- **5 findings** + 1 safe control verified
+- CVSS 3.1 scoring per finding
+- POC commands dengan output
+- Remediation (code + config)
+- Verification commands untuk IT team
+- Responsible disclosure timeline
+- Anonymized untuk portfolio publik
 
-SION has a **good security foundation** (Cloudflare WAF, HSTS, CSRF, POST login, no reflected XSS). The review found 6 items, mostly defense-in-depth improvements:
+**Top finding:** Origin IP exposure & WAF bypass on `pembayaran.stikom-bali.ac.id`.
 
-| Severity | Count | Key items |
-|---|---|---|
-| 🔴 Critical | 0 | — |
-| 🟡 Medium | 2 | Missing security headers on dynamic pages; latent XSS code smell in `showToast()` |
-| 🟢 Low | 3 | CodeIgniter 3 (old); `autocomplete="off"` UX issue; default CSRF token name |
-| ⚪ Informational | 1 | `robots.txt` Content-Signal configuration |
+### 📄 [Report.md](./Report.md) — Static Review (18 Juni 2026)
+Preliminary static analysis of `sion.stikom-bali.ac.id`:
+- HTTP header posture
+- 6 items, mostly defense-in-depth
+- **No exploit path verified** — purely hardening recommendations
+- HTML + PDF versions available
 
-**No exploit path verified from public surface.** All findings are defensive hardening.
+---
 
-## Method
+## ⚡ Quick Summary (pentest 2026)
 
-- Static analysis only (HTTP headers + HTML inspection via `curl`)
-- No login attempts, no brute force, no XSS payload submission
-- No active fuzzing
-- Out of scope: authenticated pages, admin panel, database, server internals
-- All findings reproducible without special access
+| # | Finding | Severity | CVSS 3.1 |
+|---|---|---|---|
+| 1 | Origin IP Exposure & WAF Bypass | 🔴 CRITICAL | 7.5 |
+| 2 | Missing Rate Limiting on Login | 🟠 HIGH | 7.5 |
+| 3 | Debug Mode Enabled (Stack Trace) | 🟠 HIGH | 5.3 |
+| 4 | Verbose Error Messages | 🟡 MEDIUM | 5.3 |
+| 5 | Misconfigured Web Server | 🟡 MEDIUM | 5.3 |
+| 6 | User Enumeration via Forgot Password | 🟢 SAFE | — |
 
-## Why this is public
+**Read the full report:** [pentest-2026/README.md](./pentest-2026/README.md)
 
-I asked the user (a STIKOM student) if they wanted to publish this to GitHub as portfolio. They agreed. The report is meant to be:
-1. **Sent to STIKOM IT Support** as constructive feedback
-2. **Public on GitHub** as a portfolio piece demonstrating security research methodology
+---
 
-The findings don't expose actual vulnerabilities that could be exploited — they're hardening recommendations. Publishing is safe and beneficial.
+## 🛡️ Responsible Disclosure
 
-## How to read this report
+Both reports follow responsible disclosure principles:
+- ✅ No exploitation of findings
+- ✅ Anonymized version published (sensitive data redacted)
+- ✅ Email disclosure sent to IT STIKOM
+- ✅ 90-day public disclosure window
 
-If you're STIKOM IT:
-- See [Report.md](Report.md) or [Report.pdf](Report.pdf)
-- All findings are reproducible (commands included in Section 4)
-- Fix recommendations are in Section 2 of the report
-- Suggested email template in [email-to-it.md](email-to-it.md)
+Email template: [email-to-it.md](./email-to-it.md) (for the static review; pentest 2026 has its own template inside `pentest-2026/`)
 
-If you're a security researcher:
-- Methodology: static analysis, responsible disclosure framing
-- Severity scoring: CVSS v3.1
-- All findings: defense-in-depth recommendations
-- No active testing was performed
+---
 
-## Responsible disclosure
+## 🎓 Author
 
-This project follows responsible disclosure principles:
-- No exploitation of findings
-- No disclosure of live vulnerabilities before vendor fix
-- Public release only after constructive feedback delivered
-- Findings limited to public surface (no authenticated testing)
-
-For similar research methodology, see [OWASP Testing Guide](https://owasp.org/www-project-web-security-testing-guide/).
-
-## License
-
-[MIT](LICENSE) — Feel free to use as template for your own security reviews.
-
-## Author
-
-**Afiq Andico** — Mahasiswa Sistem Informasi, STIKOM Bali
+**Afiq Andico Pangimpian** — IT Support @ Cube Cafe Jimbaran · Mahasiswa Sistem Informasi ITB STIKOM Bali
 
 - Email: afiqandico13@gmail.com
-- LinkedIn: [linkedin.com/in/afiqandico](https://linkedin.com/in/afiqandico) (placeholder)
 - GitHub: [@afiqandico13](https://github.com/afiqandico13)
+- Security portfolio: [github.com/afiqandico13?tab=repositories&q=security-review](https://github.com/afiqandico13?tab=repositories&q=security-review)
+
+Sibling security research repos:
+- [unud-web-security-review](https://github.com/afiqandico13/unud-web-security-review)
+- [warmadewa-web-security-review](https://github.com/afiqandico13/warmadewa-web-security-review)
+
+---
+
+## 📜 License
+
+MIT — see [LICENSE](./LICENSE). Feel free to use as template for your own security research.
