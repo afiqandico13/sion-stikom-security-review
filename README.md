@@ -1,3 +1,5 @@
+![GitHub top language](https://img.shields.io/github/languages/top/afiqandico13/sion-stikom-security-review) ![GitHub license](https://img.shields.io/github/license/afiqandico13/sion-stikom-security-review)
+
 # SION STIKOM Bali — Security Research
 
 Comprehensive security research on ITB STIKOM Bali's web infrastructure. Dua report tersedia: **pentest 2026** (comprehensive) dan **static review** (preliminary).
