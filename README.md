@@ -58,15 +58,7 @@ Email template: [email-to-it.md](./email-to-it.md) (for the static review; pente
 
 ## 🎓 Author
 
-**Afiq Andico Pangimpian** — IT Support @ Cube Cafe Jimbaran · Mahasiswa Sistem Informasi ITB STIKOM Bali
-
-- Email: afiqandico13@gmail.com
-- GitHub: [@afiqandico13](https://github.com/afiqandico13)
-- Security portfolio: [github.com/afiqandico13?tab=repositories&q=security-review](https://github.com/afiqandico13?tab=repositories&q=security-review)
-
-Sibling security research repos:
-- [unud-web-security-review](https://github.com/afiqandico13/unud-web-security-review)
-- [warmadewa-web-security-review](https://github.com/afiqandico13/warmadewa-web-security-review)
+**afuckingco** — IT Support @ Cube Cafe Jimbaran · Mahasiswa Sistem Informasi ITB STIKOM Bali
 
 ---
 
